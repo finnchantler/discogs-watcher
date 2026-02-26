@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type {WatchlistItem} from "~~/types/watchlist"
+import type {Release} from "~~/types/release";
 
-const name = ref('')
-const releaseId = ref('')
 const url = ref('')
 const submitting = ref(false)
 
@@ -12,23 +11,30 @@ const { data: watchlist, pending, error, refresh } =
     })
 
 async function submitForm() {
-  if (!name.value || !releaseId.value || !url.value) return
+  if (!url.value) return
 
   submitting.value = true
 
+  const releaseId = getReleaseId(url.value)
+
   try {
+    if (!releaseId) {
+      console.error("Invalid releaseId")
+      return
+    }
+
+    const { name, url: releaseUrl } = await getReleaseDetails(releaseId)
+
     await $fetch('/api/watchlist', {
       method: 'POST',
       body: {
-        name: name.value,
-        releaseId: releaseId.value,
+        name: name,
+        releaseId: releaseId,
         url: url.value
       }
     })
 
     // clear form
-    name.value = ''
-    releaseId.value = ''
     url.value = ''
 
     // refresh list
@@ -37,6 +43,33 @@ async function submitForm() {
     console.error(err)
   } finally {
     submitting.value = false
+  }
+}
+
+function getReleaseId(url: string) {
+  const match = url.match(/release\/(\d+)/)
+
+  if (!match) {
+    throw new Error('Invalid Discogs URL')
+  }
+
+  return match[1]
+}
+
+async function getReleaseDetails(releaseId: string): Promise<{ name: string; url: string }> {
+  try {
+    const release = await $fetch<Release>(
+        `/api/releases/${releaseId}`
+    )
+
+    return {
+      name: release.title,
+      url: release.uri
+    }
+
+  } catch (err) {
+    console.error(err)
+    throw err
   }
 }
 
@@ -49,8 +82,6 @@ async function submitForm() {
     <div class="container">
       <div class="input">
         <form @submit.prevent="submitForm">
-          <input v-model="name" placeholder="Name" />
-          <input v-model="releaseId" placeholder="Release ID" />
           <input v-model="url" placeholder="Discogs URL" />
           <button type="submit" :disabled="submitting">
             {{ submitting ? 'Adding...' : 'Add' }}

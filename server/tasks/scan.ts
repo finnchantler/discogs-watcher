@@ -1,4 +1,4 @@
-import {checkRelease} from "#server/services/discogs.service"
+import {getRelease} from "#server/services/discogs.service"
 import {sendNotification} from "#server/services/notification.service"
 import {getWatchlist} from "#server/repository/watchlist.repository"
 
@@ -13,9 +13,9 @@ export default defineTask({
         const watchlist = await getWatchlist()
 
         for (const item of watchlist) {
-            const listings = await checkRelease(item.releaseId)
+            const release = await getRelease(item.releaseId)
 
-            if (listings > 0) {
+            if (release.num_for_sale > 0) {
                 await sendNotification(item)
             }
         }

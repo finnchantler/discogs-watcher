@@ -1,23 +1,16 @@
 import {Release} from "~~/types/release"
 
-export async function checkRelease(releaseId: string): Promise<number> {
+export async function getRelease(releaseId: string): Promise<Release> {
     const config = useRuntimeConfig()
 
     const url = `${config.discogsBaseUrl}/releases/${releaseId}`
 
-    const response: Release = await $fetch(
-        url,
+    return await $fetch<Release>(
+        url as string,
         {
             headers: {
-                UserAgent: config.discogsUserAgent,
+                "User-Agent": config.discogsUserAgent,
             }
         }
     )
-
-    let numForSale = 0
-    if(response) {
-        numForSale = response.num_for_sale
-    }
-
-    return numForSale
 }
