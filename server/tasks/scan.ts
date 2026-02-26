@@ -7,7 +7,7 @@ export default defineTask({
         name: "scan",
         description: "scan discogs listings for new items",
     },
-    async run({ payload, context }) {
+    async run() {
         console.log("Scanning discogs listings...")
 
         const watchlist = await getWatchlist()

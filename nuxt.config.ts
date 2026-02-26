@@ -4,8 +4,10 @@ export default defineNuxtConfig({
     discogsBaseUrl: process.env.DISCOGS_BASE_URL,
     discogsUserAgent: process.env.DISCOGS_USER_AGENT
   },
+
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
+
   nitro: {
     experimental: {
       tasks: true
@@ -13,5 +15,7 @@ export default defineNuxtConfig({
     scheduledTasks: {
       '* * * * *': ['scan']
     }
-  }
+  },
+
+  modules: ['@nuxt/fonts']
 })
