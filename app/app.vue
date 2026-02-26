@@ -23,7 +23,7 @@ async function submitForm() {
       return
     }
 
-    const { name, url: releaseUrl } = await getReleaseDetails(releaseId)
+    const name = await getReleaseDetails(releaseId)
 
     await $fetch('/api/watchlist', {
       method: 'POST',
@@ -56,20 +56,31 @@ function getReleaseId(url: string) {
   return match[1]
 }
 
-async function getReleaseDetails(releaseId: string): Promise<{ name: string; url: string }> {
+async function getReleaseDetails(releaseId: string): Promise<string> {
   try {
     const release = await $fetch<Release>(
         `/api/releases/${releaseId}`
     )
 
-    return {
-      name: release.title,
-      url: release.uri
-    }
+    const artists = release.artists.map(artist => artist.name).join(', ')
+
+    return `${artists} - ${release.title}`
 
   } catch (err) {
     console.error(err)
     throw err
+  }
+}
+
+async function deleteItem(id: number): Promise<void> {
+  try {
+    await $fetch(`/api/watchlist/${id}`, {
+      method: 'DELETE'
+    })
+
+    await refresh()
+  } catch (err) {
+    console.error(err)
   }
 }
 
@@ -96,6 +107,13 @@ async function getReleaseDetails(releaseId: string): Promise<{ name: string; url
             <a :href="item.url" target="_blank" rel="noopener">
               {{ item.name }}
             </a>
+            <button
+                class="delete-button"
+                type="button"
+                @click="deleteItem(item.id)"
+            >
+              X
+            </button>
           </li>
         </ul>
       </div>

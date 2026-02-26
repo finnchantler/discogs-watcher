@@ -1,4 +1,5 @@
 import { db } from "../db"
+import { eq } from "drizzle-orm"
 import { watchlist } from "#server/db/schema"
 import { WatchlistItem } from "~~/types/watchlist"
 
@@ -17,4 +18,9 @@ export async function addWatchlistItem(
         alerted: false,
         added: new Date()
     })
+}
+
+export async function deleteWatchlistItem(id: number): Promise<void> {
+    await db.delete(watchlist)
+        .where(eq(watchlist.id, id))
 }
