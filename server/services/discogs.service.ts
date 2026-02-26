@@ -1,4 +1,4 @@
-import {Release} from "~~/types/release";
+import {Release} from "~~/types/release"
 
 export async function checkRelease(releaseId: string): Promise<number> {
     const config = useRuntimeConfig()

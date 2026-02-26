@@ -1,6 +1,5 @@
-import {getWatchlist} from "#server/repository/watchlist.repository";
-import {checkRelease} from "#server/services/discogs.service";
-import {sendNotification} from "#server/services/notification.service";
+import {checkRelease} from "#server/services/discogs.service"
+import {sendNotification} from "#server/services/notification.service"
 
 export default defineTask({
     meta: {
