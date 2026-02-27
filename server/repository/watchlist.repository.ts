@@ -20,6 +20,12 @@ export async function addWatchlistItem(
     })
 }
 
+export async function markWatchlistItemAlerted(id: number): Promise<void> {
+    await db.update(watchlist)
+        .set({ alerted: true })
+        .where(eq(watchlist.id, id))
+}
+
 export async function deleteWatchlistItem(id: number): Promise<void> {
     await db.delete(watchlist)
         .where(eq(watchlist.id, id))

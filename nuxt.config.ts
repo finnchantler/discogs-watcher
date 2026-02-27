@@ -2,7 +2,9 @@
 export default defineNuxtConfig({
   runtimeConfig: {
     discogsBaseUrl: process.env.DISCOGS_BASE_URL,
-    discogsUserAgent: process.env.DISCOGS_USER_AGENT
+    discogsUserAgent: process.env.DISCOGS_USER_AGENT,
+    discogsConsumerKey: process.env.CONSUMER_KEY,
+    discogsConsumerSecret: process.env.CONSUMER_SECRET
   },
 
   compatibilityDate: '2025-07-15',

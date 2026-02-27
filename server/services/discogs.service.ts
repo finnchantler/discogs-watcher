@@ -10,6 +10,7 @@ export async function getRelease(releaseId: string): Promise<Release> {
         {
             headers: {
                 "User-Agent": config.discogsUserAgent,
+                "Authorization": `Discogs key=${config.discogsConsumerKey}, secret=${config.discogsConsumerSecret}`
             }
         }
     )

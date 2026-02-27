@@ -2,6 +2,8 @@
 import type {WatchlistItem} from "~~/types/watchlist"
 import type {Release} from "~~/types/release";
 
+useHead({ title: 'discogs-watcher' })
+
 const url = ref('')
 const submitting = ref(false)
 
@@ -72,6 +74,13 @@ async function getReleaseDetails(releaseId: string): Promise<string> {
   }
 }
 
+function formatAdded(date: string | Date): string {
+  const d = new Date(date)
+  const day = String(d.getDate()).padStart(2, '0')
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  return `added ${day}/${month}`
+}
+
 async function deleteItem(id: number): Promise<void> {
   try {
     await $fetch(`/api/watchlist/${id}`, {
@@ -88,7 +97,7 @@ async function deleteItem(id: number): Promise<void> {
 <template>
   <div class="main-container">
     <div class="header">
-      <h1>Discogs Watcher</h1>
+      <h1>discogs-watcher</h1>
     </div>
     <div class="container">
       <div class="input">
@@ -100,13 +109,14 @@ async function deleteItem(id: number): Promise<void> {
         </form>
       </div>
       <div class="watchlist">
-        <div v-if="pending">Loading...</div>
-        <div v-else-if="error">Something went wrong</div>
+        <div v-if="error">Something went wrong</div>
         <ul v-else>
           <li v-for="item in watchlist" :key="item.id">
-            <a :href="item.url" target="_blank" rel="noopener">
-              {{ item.name }}
-            </a>
+            <span class="item-name">
+              <a :href="item.url" target="_blank" rel="noopener">{{ item.name }}</a>
+            </span>
+            <span class="item-added">{{ formatAdded(item.added) }}</span>
+            <span v-if="item.alerted" class="item-alerted">(alerted)</span>
             <button
                 id="delete-button"
                 type="button"
@@ -211,6 +221,7 @@ async function deleteItem(id: number): Promise<void> {
   display: flex;
   justify-content: space-between; /* text left, button right */
   align-items: center;
+  gap: 2rem;
   padding: 0.75rem 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
@@ -222,6 +233,11 @@ async function deleteItem(id: number): Promise<void> {
   color: #ffffff;
   text-decoration: none;
   word-break: break-word;
+  transition: font-size 0.15s ease;
+}
+
+.watchlist a:hover {
+  font-size: 1.1em;
 }
 
 #delete-button {
