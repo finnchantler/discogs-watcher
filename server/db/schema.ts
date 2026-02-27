@@ -1,13 +1,13 @@
-import {sqliteTable, text, integer } from "drizzle-orm/sqlite-core"
+import { pgTable, text, integer, boolean, timestamp } from "drizzle-orm/pg-core"
 
-export const watchlist = sqliteTable("watchlist", {
-    id: integer("id").primaryKey({ autoIncrement: true }),
+export const watchlist = pgTable("watchlist", {
+    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
     name: text("name").notNull(),
     releaseId: text("releaseId").notNull(),
     url: text("url").notNull(),
-    alerted: integer("alerted", { mode: "boolean" })
+    alerted: boolean("alerted")
         .notNull()
         .default(false),
-    added: integer("added", { mode: "timestamp" })
+    added: timestamp("added")
         .notNull()
 })
